@@ -1,0 +1,89 @@
+@ Will Hooker
+@ This program takes in a number between 1-100 from the user, terminates if the input is invalid, and if it is valid, prints the number and overall
+@ sum of the numbers counting up from 1 to the number entered                                                                                                                                                                                                                             .global _start
+@
+@ Use these commands to assemble, link, and run
+@  as -o WillHookerLab4.o WillHookerLab4.s
+@  gcc -o WillHookerLab4 WillHookerLab4.o
+@  ./WillHookerLab4 ;echo $?
+@  gdb --args ./WillHookerLab4
+@
+@
+
+.global main
+main:
+
+Prompt:
+	@ Printing the prompt message
+	LDR 	r0, =prompt
+	BL 	printf
+
+Input:
+	@ Reading in the user input
+	LDR 	r0, =format
+	LDR 	r1, =number
+	BL 	scanf
+
+
+Input_check:	
+	@ Checking if the input is valid	
+	LDR 	r1, =number
+	LDR 	r1, [r1]
+	CMP 	r1, #1
+	BLT 	invalid_input
+	CMP 	r1, #100
+	BGT 	invalid_input
+
+	@ Initialize sum to 1
+	MOV 	r5, r1 		@ saving user input
+	MOV 	r1, #1 		@ number
+	MOV 	r2, #1 		@ sum
+
+print_loop:
+	@ Printing number and cumulative sum
+	LDR 	r0, =result
+	MOV 	r6, r1 		@ saving the current number before print
+	MOV 	r4, r2 		@ saving current sum before print
+	BL 	printf
+
+	@ Incrementing the sum
+	ADD 	r1, r6, #1 	@ Incrementing number
+	MOV 	r2, r4 		@ Loading current sum
+	ADD 	r2, r2, r1 	@ Adding current number to the sum
+
+	@ Checking if the user entered number has been reached
+	CMP 	r1, r5
+	BGE 	program_end
+	
+	@ Repeating the loop
+	B 	print_loop
+
+invalid_input:
+	@ Printing error message
+	LDR 	r0, =invalid
+	BL 	printf
+
+program_end:
+	@ Exiting the program
+	MOV 	r7, #0X01
+	SVC 	0    
+
+.data
+.balign 4
+prompt: 	.asciz "Enter a number between 1 and 100: "
+
+.balign 4
+invalid:	.asciz "Invalid input. Please enter a number between 1 and 100.\n"
+
+.balign 4
+format:		.asciz "%d"
+
+.balign 4
+result:		.asciz "%d: %d\n"
+
+.balign 4
+number: 	.word 0
+
+.global printf
+.global scanf
+                                                                                                         
