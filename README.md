@@ -1,1 +1,3 @@
-# ARM-Lab-4
+# ARM Lab 4
+This program takes in a number between 1-100 from the user, terminates if the input is invalid, and if it is valid, prints the number and overall
+sum of the numbers counting up from 1 to the number entered
